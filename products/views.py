@@ -4,6 +4,7 @@ from products.models import CategoryModel, ProductModel, CartModel
 from django.contrib.auth import logout
 from products.forms import SearchForm
 from django.views.generic.list import ListView
+from products.handler import bot
 
 
 # def home_page(request):
@@ -87,4 +88,20 @@ def user_cart(request):
                         f"Amount: {i.user_product_quantity}\n" \
                         f"Customer: {i.user_id}\n" \
                         f"Price of product: {i.user_product.product_price}\n"
+
+# 6923877967:AAGouV0i-Dlxpdv-eqYbwpaZMEg2f12wY9I
+            bot.send_message(-1002029927991, main_text)
+            cart.delete()
+            return redirect("/")
+    else:
+        return render(request, template_name="cart.html", context={'cart': cart})
+
+
+def delete_user_cart(request, pk):
+    product_delete = ProductModel.objects.get(pk=pk)
+
+    CartModel.objects.filter(user_id=request.user.id,
+                             user_product=product_delete
+                             ).delete()
+    return redirect("/user_cart")
 
